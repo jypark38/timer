@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ko-KR">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" />
+    <link rel="stylesheet" href="./style.css">
+    <title></title>
+    <style>
+        body{
+            font-family: 'Pretendard';
+            background: radial-gradient(96.74% 276.79% at 3.59% 5.28%, #F0F4FF 0%, #A5B6EE 100%) /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */;
+            background-repeat: no-repeat;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <header>
+            <h1 class="a11y-hidden">위니브로고</h1>
+            <img src="./asset/weniv-logo.png" alt="">
+        </header>
+        <main class="container">
+            <h2>Timer</h2>
+            <hr>
+            <hr>
+
+            <div class="time">
+                <div class="hrs-box">
+                    <label for="hr">HRS</label>
+                    <input id='hr' type="text" placeholder="00">
+                </div>
+                <img class='dot' src="./asset/dot.png" alt="">
+                <div class="min-box">
+                    <label for="min">MIN</label>
+                    <input id = 'min' type="text" placeholder="00">
+                </div>
+                <img class='dot' src="./asset/dot.png" alt="">
+                <div class="sec-box">
+                    <label for="sec">SEC</label>
+                    <input id='sec' type="text" placeholder="00">
+                </div>
+            </div>
+            <div class="btn-wrap">
+                <button class="start" disabled></button>
+                <button class="reset" disabled></button>
+            </div>
+        </main>
+        <footer>
+            <p>@ WENIV CORP.</p>
+        </footer>
+    </div>
+    <script>
+        const hr = document.querySelector('#hr'),
+        min = document.querySelector('#min'),
+        sec = document.querySelector('#sec'),
+        start = document.querySelector('.start'),
+        reset = document.querySelector('.reset'),
+        input = document.querySelectorAll('input')
+
+        input.forEach(i=>{
+            i.addEventListener('keyup',(evt)=>{
+                if(evt.key in ['1','2','3','4','5','6','7','8','9','0']){
+                    if(hr.value || min.value || sec.value){
+                        start.disabled = false
+                        reset.disabled = false
+                    }
+                }
+                else{
+                    start.disabled = true
+                    reset.disabled = true
+                }
+            })
+        })
+        let id;
+        start.addEventListener('click',()=>{
+            if (!start.classList.contains('active')){
+                start.classList.add('active')
+                input.forEach(i=>{
+                    i.disabled=true
+                })
+                var secInterval = setInterval(startState,1000)
+                id = secInterval
+            }else{
+                start.classList.remove('active')
+                input.forEach(i=>{
+                    i.disabled=false
+                })
+                console.log(id)
+                clearInterval(id)
+            }
+        })
+
+        reset.addEventListener('click',resetState)
+
+        function startState(){
+            console.log(this)
+            sec.value = sec.value*1-1+''
+            if(sec.value*1<0){
+                min.value = min.value*1-1+''
+                sec.value = 59+''
+                if(min.value*1<0){ // min이 0보다 작아졌을 때
+                    if(hr.value*1<=0){
+                        resetState()
+                    }else{
+                        hr.value = hr.value*1-1+''
+                        min.value = '59'+''
+                    }
+                }
+            }
+        }
+
+        function resetState(){
+            start.disabled = true
+            start.classList.remove('active')
+            reset.disabled = true
+            input.forEach(i=>{
+                i.value=''
+                i.disabled = false
+            })
+            clearInterval(id)
+            
+        }
+
+        function pause(id){
+            console.log('멈춤')
+            clearInterval(secInterval)
+        }
+
+    </script>
+</body>
+</html>
